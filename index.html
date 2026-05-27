@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UG Design Studio | Selected Portfolio</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lucide-static@0.344.0/font/lucide.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0f1115; color: #f3f4f6; }
+        .cursor-zoom-in { cursor: zoom-in; }
+    </style>
+</head>
+<body>
+
+    <section id="work" class="py-24 lg:py-32 max-w-7xl mx-auto px-6 lg:px-12">
+        <div class="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end border-b border-gray-800 pb-12">
+            <div>
+                <p class="text-xs uppercase tracking-[0.3em] text-gray-500 font-medium">Selected Work</p>
+                <h2 class="mt-4 text-balance text-4xl md:text-5xl lg:text-6xl font-light tracking-tight">
+                    A portfolio of <em class="italic serif font-serif text-gray-400">quiet</em> precision.
+                </h2>
+            </div>
+            
+            <ul class="flex flex-wrap gap-2" id="filter-container">
+                <li><button onclick="filterCat('All')" id="btn-All" class="border px-5 py-2 text-[11px] uppercase tracking-[0.2em] transition-all border-white bg-white text-black font-semibold">All</button></li>
+                <li><button onclick="filterCat('Residential')" id="btn-Residential" class="border px-5 py-2 text-[11px] uppercase tracking-[0.2em] transition-all border-gray-800 text-gray-400 hover:border-gray-400 hover:text-white">Residential</button></li>
+                <li><button onclick="filterCat('Commercial')" id="btn-Commercial" class="border px-5 py-2 text-[11px] uppercase tracking-[0.2em] transition-all border-gray-800 text-gray-400 hover:border-gray-400 hover:text-white">Commercial</button></li>
+                <li><button onclick="filterCat('Modern Tropical')" id="btn-Modern-Tropical" class="border px-5 py-2 text-[11px] uppercase tracking-[0.2em] transition-all border-gray-800 text-gray-400 hover:border-gray-400 hover:text-white">Modern Tropical</button></li>
+                <li><button onclick="filterCat('Hospitality')" id="btn-Hospitality" class="border px-5 py-2 text-[11px] uppercase tracking-[0.2em] transition-all border-gray-800 text-gray-400 hover:border-gray-400 hover:text-white">Hospitality</button></li>
+            </ul>
+        </div>
+
+        <div class="mt-10 max-w-md">
+            <input
+                id="portfolio-search"
+                type="search"
+                oninput="handleSearch(this.value)"
+                placeholder="Search by title or location…"
+                class="w-full border border-gray-800 bg-transparent px-4 py-3 text-sm tracking-wide placeholder:text-gray-600 focus:border-gray-400 focus:outline-none rounded-none text-white"
+            />
+        </div>
+
+        <div id="portfolio-grid" class="mt-12 grid grid-cols-6 gap-6 lg:gap-8">
+            </div>
+    </section>
+
+    <div id="lightbox" class="fixed inset-0 z-50 hidden flex-col bg-black/95 backdrop-blur-sm justify-between py-8">
+        <button onclick="closeLightbox()" class="absolute right-6 top-6 p-3 text-gray-400 hover:text-white transition">
+            <i class="lucide-x text-2xl"></i>
+        </button>
+        <button onclick="showPrev()" class="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-gray-400 hover:text-white transition">
+            <i class="lucide-chevron-left text-4xl"></i>
+        </button>
+        <button onclick="showNext()" class="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-gray-400 hover:text-white transition">
+            <i class="lucide-chevron-right text-4xl"></i>
+        </button>
+
+        <div class="flex flex-1 items-center justify-center px-4 md:px-16 max-h-[75vh]">
+            <img id="lightbox-img" src="" alt="" class="max-h-full max-w-full object-contain">
+        </div>
+
+        <div class="text-center px-6">
+            <h3 id="lightbox-title" class="text-2xl font-light"></h3>
+            <p id="lightbox-meta" class="mt-2 text-xs uppercase tracking-[0.25em] text-gray-500"></p>
+            <p id="lightbox-index" class="mt-2 text-[11px] uppercase tracking-[0.2em] text-gray-600"></p>
+        </div>
+    </div>
+
+    <script>
+        const items = [
+            { src: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200", title: "Classical Manor", place: "OGUN, NG", cat: "Residential" },
+            { src: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?q=80&w=1200", title: "Minimalist Villa", place: "ENUGU, NG", cat: "Residential" },
+            { src: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=1200", title: "Lumina Pavilion", place: "ABUJA, NG", cat: "Residential" },
+            { src: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=1200", title: "Onyx Crest Bungalow", place: "OWERRI, NG", cat: "Residential" },
+            { src: "https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200", title: "Hotel Façade", place: "ENUGU, NG", cat: "Hospitality" },
+            { src: "https://images.unsplash.com/photo-1582719508461-905c673771fd?q=80&w=1200", title: "Hotel Wing", place: "ENUGU, NG", cat: "Hospitality" },
+            { src: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1200", title: "Villa Asana", place: "EBONYI, NG", cat: "Modern Tropical" },
+            { src: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200", title: "The Twin Monoliths", place: "WOTE, KEN", cat: "Commercial" },
+            { src: "https://images.unsplash.com/photo-1577495508048-b635879837f1?q=80&w=1200", title: "Aura Lounge", place: "ACCRA, GH", cat: "Commercial" }
+        ];
+
+        let currentCat = "All";
+        let searchQuery = "";
+        let filteredItems = [...items];
+        let currentLightboxIndex = null;
+
+        function renderGrid() {
+            const grid = document.getElementById("portfolio-grid");
+            grid.innerHTML = "";
+
+            filteredItems = items.filter(item => {
+                const matchesCat = currentCat === "All" || item.cat === currentCat;
+                const matchesSearch = item.title.toLowerCase().includes(searchQuery) || item.place.toLowerCase().includes(searchQuery);
+                return matchesCat && matchesSearch;
+            });
+
+            if (filteredItems.length === 0) {
+                grid.innerHTML = `<p class="col-span-6 text-sm text-gray-500">No projects match your search.</p>`;
+                return;
+            }
+
+            filteredItems.forEach((item, idx) => {
+                const pos = idx % 6;
+                let span = "col-span-6 sm:col-span-3 md:col-span-2";
+                if (pos === 0) span = "col-span-6";
+                else if (pos === 1 || pos === 2) span = "col-span-6 md:col-span-3";
+
+                const figure = document.createElement("figure");
+                figure.className = `group block ${span}`;
+                figure.innerHTML = `
+                    <button type="button" onclick="openLightbox(${idx})" class="relative block w-full overflow-hidden bg-gray-900 aspect-[16/9] cursor-zoom-in focus:outline-none">
+                        <img src="${item.src}" alt="${item.title}" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                        <div class="absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20"></div>
+                    </button>
+                    <figcaption class="mt-4 flex items-baseline justify-between">
+                        <div>
+                            <h3 class="text-lg font-medium text-white">${item.title}</h3>
+                            <p class="mt-1 text-xs uppercase tracking-[0.2em] text-gray-500">${item.place}</p>
+                        </div>
+                        <span class="text-[10px] uppercase tracking-[0.25em] text-gray-500">${item.cat}</span>
+                    </figcaption>
+                `;
+                grid.appendChild(figure);
+            });
+        }
+
+        function filterCat(cat) {
+            currentCat = cat;
+            const buttons = document.querySelectorAll("#filter-container button");
+            buttons.forEach(btn => {
+                btn.className = "border px-5 py-2 text-[11px] uppercase tracking-[0.2em] transition-all border-gray-800 text-gray-400 hover:border-gray-400 hover:text-white";
+            });
+            const activeBtn = document.getElementById(`btn-${cat.replace(' ', '-')}`);
+            if (activeBtn) activeBtn.className = "border px-5 py-2 text-[11px] uppercase tracking-[0.2em] transition-all border-white bg-white text-black font-semibold";
+            renderGrid();
+        }
+
+        function handleSearch(val) {
+            searchQuery = val.trim().toLowerCase();
+            renderGrid();
+        }
+
+        function openLightbox(idx) {
+            currentLightboxIndex = idx;
+            const item = filteredItems[idx];
+            document.getElementById("lightbox-img").src = item.src;
+            document.getElementById("lightbox-title").innerText = item.title;
+            document.getElementById("lightbox-meta").innerText = `${item.place} — ${item.cat}`;
+            document.getElementById("lightbox-index").innerText = `${idx + 1} / ${filteredItems.length}`;
+            document.getElementById("lightbox").classList.remove("hidden");
+            document.getElementById("lightbox").classList.add("flex");
+        }
+
+        function closeLightbox() {
+            document.getElementById("lightbox").classList.add("hidden");
+            document.getElementById("lightbox").classList.remove("flex");
+        }
+
+        function showPrev() {
+            if (currentLightboxIndex === null) return;
+            let nextIdx = (currentLightboxIndex - 1 + filteredItems.length) % filteredItems.length;
+            openLightbox(nextIdx);
+        }
+
+        function showNext() {
+            if (currentLightboxIndex === null) return;
+            let nextIdx = (currentLightboxIndex + 1) % filteredItems.length;
+            openLightbox(nextIdx);
+        }
+
+        // Initialize grid
+        renderGrid();
+    </script>
+</body>
+</html>
